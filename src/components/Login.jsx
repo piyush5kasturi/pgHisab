@@ -1,6 +1,26 @@
+import axios from 'axios';
 import React from 'react'
+import { Controller, useForm } from 'react-hook-form'
 
 const Login = () => {
+    const { control, reset, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: {
+            userName: '',
+            password: '',
+        }
+    });
+    const onSubmit = async (data) => {
+        // setIsLoading(true);
+        console.log(data, ";;;;")
+        await axios.post('https://pghisab.bsite.net/login', data)
+            .then(res => {
+                console.log(res)
+            })
+            .catch((e) => { console.log(e) })
+        // setIsLoading(false);
+        reset();
+
+    }
     return (
         <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
             <div className="relative py-3 sm:max-w-xl sm:mx-auto">
@@ -10,23 +30,39 @@ const Login = () => {
                 <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
                     <div className="max-w-md mx-auto">
                         <div>
-                            <h1 className="text-2xl font-semibold">Login Form with Floating Labels</h1>
+                            <h1 className="text-2xl font-semibold">PG HISAB</h1>
                         </div>
-                        <div className="divide-y divide-gray-200">
-                            <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                                <div className="relative">
-                                    <input autocomplete="off" id="email" name="email" type="text" className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Email address" />
-                                    <label for="email" className="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Email Address</label>
-                                </div>
-                                <div className="relative">
-                                    <input autocomplete="off" id="password" name="password" type="password" className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Password" />
-                                    <label for="password" className="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Password</label>
-                                </div>
-                                <div className="relative">
-                                    <button className="bg-blue-500 text-white rounded-md px-2 py-1">Submit</button>
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <div className="divide-y divide-gray-200">
+                                <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+                                    <div className="relative">
+                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                                            UserName
+                                        </label>
+                                        <Controller
+                                            control={control}
+                                            name="userName"
+                                            rules={{ required: true }}
+                                            render={({ field: { value, onChange } }) => (
+                                                <input value={value} onChange={(e) => onChange(e.target.value)} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline ${errors?.userName && 'border border-red-500'}`} type="text" placeholder="Enter Username" />
+                                            )} />   </div>
+                                    <div className="relative">
+                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                                            Password
+                                        </label>
+                                        <Controller
+                                            control={control}
+                                            name="password"
+                                            rules={{ required: true }}
+                                            render={({ field: { value, onChange } }) => (
+                                                <input value={value} onChange={(e) => onChange(e.target.value)} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline ${errors?.password && 'border border-red-500'}`} type="password" placeholder="Enter Password" />
+                                            )} />   </div>
+                                    <div className="relative">
+                                        <button className="bg-blue-500 text-white rounded-md px-2 py-1">Submit</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
