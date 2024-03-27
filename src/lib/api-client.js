@@ -26,7 +26,6 @@ axios.interceptors.request.use((config) => {
   // ) {
   //   return setCSRFToken().then(() => config);
   // }
-console.log(config,";;;")
   return config;
 });
 
@@ -39,7 +38,6 @@ export default async function API(method = 'get', url = '', data = {}) {
     if (!response) {
       throw false;
     }
-    console.log(response,";;;;;;;;llll")
     return await response;
   } catch (error) {
     // if (error.response?.status === 400) {

@@ -4,7 +4,7 @@ import {
   Route,
   RouterProvider,
 } from 'react-router-dom';
-import Login from './components/Login';
+import Login from './components/login';
 import { Suspense } from 'react';
 import Create from './components/Create';
 const router = createBrowserRouter(
