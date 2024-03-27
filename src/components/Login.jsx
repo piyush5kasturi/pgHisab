@@ -1,6 +1,7 @@
-import axios from 'axios';
-import React from 'react'
+// import axios from 'axios';
+// import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import API from '../lib/api-client';
 
 const Login = () => {
     const { control, reset, handleSubmit, formState: { errors } } = useForm({
@@ -10,13 +11,15 @@ const Login = () => {
         }
     });
     const onSubmit = async (data) => {
+        const response = await API('post', "https://pghisab.bsite.net/login",data);
+        console.log(response,'gfgfggggggf')
         // setIsLoading(true);
         console.log(data, ";;;;")
-        await axios.post('https://pghisab.bsite.net/login', data)
-            .then(res => {
-                console.log(res)
-            })
-            .catch((e) => { console.log(e) })
+        // await axios.post('https://pghisab.bsite.net/login', data)
+        //     .then(res => {
+        //         console.log(res)
+        //     })
+        //     .catch((e) => { console.log(e) })
         // setIsLoading(false);
         reset();
 
