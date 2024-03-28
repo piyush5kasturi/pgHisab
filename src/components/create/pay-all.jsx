@@ -2,7 +2,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-const Create = () => {
+const PayAll = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState(null);
     const [message, setMessage] = useState('');
@@ -49,6 +49,8 @@ const Create = () => {
     useEffect(() => { getData(); }, [])
     return (
         <>
+
+
             <div className="w-full flex flex-col justify-center items-center px-4 py-3 md:py-0 md:h-screen">
 
                 {isLoading ? <div role="status">
@@ -169,4 +171,4 @@ const Create = () => {
     )
 }
 
-export default Create
+export default PayAll

@@ -24,7 +24,7 @@ export function useSignIn() {
     return {
         signInMutation,
         isLoading,
-        error: (error && error?.data) || 'Something went wrong.',
+        error: (error && error?.data) || '',
         data,
     };
 }
