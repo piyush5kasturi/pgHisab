@@ -1,5 +1,5 @@
-import Axios from 'axios';
-// import Cookies from 'js-cookie';
+import Axios from "axios";
+import Cookies from "js-cookie";
 // import { setAlert } from 'src/reducers/alert';
 // import { setEnoughPermission, setSessionExpired } from 'src/reducers/auth';
 
@@ -7,7 +7,7 @@ import Axios from 'axios';
 
 const axios = Axios.create({
   baseURL: import.meta.env.VITE_API_HOST,
-  withCredentials: import.meta.env.VITE_ENV !== 'tv',
+  withCredentials: true,
 });
 
 // // A function that calls '/api/csrf-cookie' to set the CSRF cookies. The
@@ -17,21 +17,12 @@ const axios = Axios.create({
 // };
 
 axios.interceptors.request.use((config) => {
-  // If http method is `post | put | delete` and XSRF-TOKEN cookie is
-  // not present, call '/sanctum/csrf-cookie' to set CSRF token, then
-  // proceed with the initial response
-  // if (
-  //   (config.method == 'post' || config.method == 'put' || config.method == 'delete') &&
-  //   import.meta.env.VITE_ENV != 'tv'
-  // ) {
-  //   return setCSRFToken().then(() => config);
-  // }
+  config.headers.Authorization = `Bearer ${Cookies.get("pg-token")}`;
   return config;
 });
 
-export default async function API(method = 'get', url = '', data = {}) {
+export default async function API(method = "get", url = "", data = {}) {
   // const auth = store.getState()?.auth;
-
 
   try {
     const response = await axios[method](url, data);
