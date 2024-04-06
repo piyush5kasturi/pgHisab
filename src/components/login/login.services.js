@@ -20,11 +20,13 @@ export function useSignIn() {
         isLoading,
         error,
         data,
+        isError,
     } = useMutation((values) => signIn(values));
     return {
         signInMutation,
         isLoading,
-        error: (error && error?.data) || '',
+        error: (error && error) || '',
         data,
+        isError,
     };
 }

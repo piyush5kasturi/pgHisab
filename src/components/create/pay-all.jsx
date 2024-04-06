@@ -1,30 +1,14 @@
 import { useState } from "react";
 
 import Table from "../../ui-components/table";
-import classNames from "classnames";
 import AddExpense from "../../ui-components/modals/add-expense";
+import Button from "../../ui-components/button";
 const PayAll = () => {
   const [{ type, isPopupOpen }, setPopupState] = useState({
     isPopupOpen: false,
     type: null,
   });
-  //   const getData = async () => {
-  //     setIsLoading(true);
-  //     await axios
-  //       .get(
-  //         "https://script.google.com/macros/s/AKfycbz8gqLuCwHCR0S8Q3NHABLNlhh6jRt58_iOpwvlwX0au_f27wwkDp2Rw6szEApBxPsE/exec"
-  //       )
-  //       .then((res) => setAllData(res?.data))
-  //       .catch((e) => {
-  //         setData(e);
-  //         setMessage("error");
-  //         setIsLoading(false);
-  //       });
-  //     setIsLoading(false);
-  //   };
-  //   useEffect(() => {
-  //     getData();
-  //   }, []);
+
   return (
     <>
       {isPopupOpen && type === "edit_days" && (
@@ -39,14 +23,13 @@ const PayAll = () => {
         />
       )}
       <div className="pb-4 flex justify-end">
-        <button
-          className={classNames("bg-blue-500 text-white rounded-md px-2 py-1")}
+        <Button
+          type="button"
+          text="Add Expense"
           onClick={() =>
             setPopupState({ isPopupOpen: true, type: "edit_days" })
           }
-        >
-          Add Expense
-        </button>
+        />
       </div>
       <Table />
       {/* <div className="w-full flex flex-col justify-center items-center px-4 py-3 md:py-0 md:h-screen">

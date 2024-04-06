@@ -1,15 +1,15 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { usePayAll } from "../../components/create/pay-all.services";
-
+import Input from "../input";
+import Close from "../../assets/ui-icons/close.svg?react";
+import classNames from "classnames";
+import Button from "../button";
 export default function AddExpense({ toggle, isOpen = false }) {
-  const ref = useRef(null);
-  const [message, setMessage] = useState("");
   const { payAllMutation, isLoading, error, data } = usePayAll();
   const {
     control,
-    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -25,11 +25,13 @@ export default function AddExpense({ toggle, isOpen = false }) {
       payAmount: Number(amount),
       discription: name,
     });
-    reset();
   };
   useEffect(() => {
-    console.log(data, ";;;;;", isLoading);
-  }, [data]);
+    if (data) {
+      toggle(false);
+    }
+  }, [data, toggle]);
+  console.log(error,";;;ss")
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -66,80 +68,52 @@ export default function AddExpense({ toggle, isOpen = false }) {
                 <p className="text-lg font-montserratBold text-[#3D3D3D] dark:text-[#E7E7E7]">
                   Add Expense
                 </p>
-                <div
-                  className="cursor-pointer dark:fill-[#888888] fill-[#6D6D6D] h-3 w-3"
+                <Close
+                  className={classNames(
+                    "dark:fill-gray-500 cursor-pointer transition-all fill-[#8F8F8F]"
+                  )}
                   onClick={() => toggle(false)}
-                >
-                  Close
+                />
+              </div>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="p-6">
+                  <Controller
+                    control={control}
+                    name="amount"
+                    rules={{ required: true }}
+                    render={({ field: { value, onChange } }) => (
+                      <Input
+                        type="number"
+                        label="Amount"
+                        value={value}
+                        onChange={onChange}
+                        placeholder="Enter Amount"
+                        errors={errors?.amount}
+                        required
+                      />
+                    )}
+                  />
                 </div>
-              </div>
-              <div className="w-full flex flex-col justify-center items-center px-4 py-3 md:py-0 ">
-                <form
-                  onSubmit={handleSubmit(onSubmit)}
-                  className="bg-white shadow-md rounded px-8 pt-6 pb-8 my-4"
-                >
-                  <div className="mb-4">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="username"
-                    >
-                      Name*
-                    </label>
-                    <Controller
-                      control={control}
-                      name="name"
-                      render={({ field: { value, onChange } }) => (
-                        <select
-                          value={value}
-                          onChange={(e) => onChange(e.target.value)}
-                          className="block appearance-none w-full border border-gray-200 text-gray-700 py-2 px-3 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                          id="grid-state"
-                        >
-                          <option value="Arshdeep Singh">Arshdeep Singh</option>
-                          <option value="Tarun Mittal">Tarun Mittal</option>
-                          <option value="Piyush Kasturi">Piyush Kasturi</option>
-                        </select>
-                      )}
+                <div className="grid grid-cols-2 w-full p-6 border-t-[1px] border-[#E7E7E7] dark:border-light-color  gap-4">
+                  <>
+                    <Button
+                      variant="secondary"
+                      text="Cancel"
+                      onClick={() => toggle(false)}
+                      size="medium"
+                      full
                     />
-                  </div>
-
-                  <div className="mb-6">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="password"
-                    >
-                      Amount*
-                    </label>
-                    <Controller
-                      control={control}
-                      name="amount"
-                      rules={{ required: true }}
-                      render={({ field: { value, onChange } }) => (
-                        <input
-                          value={value}
-                          onChange={(e) => onChange(e.target.value)}
-                          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline ${
-                            errors?.amount && "border border-red-500"
-                          }`}
-                          id="password"
-                          type="number"
-                          min={0}
-                          placeholder="Enter Amount"
-                        />
-                      )}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <button
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    <Button
+                      text="Save"
+                      isLoading={isLoading}
+                      disabled={isLoading}
                       type="submit"
-                    >
-                      Submit
-                    </button>
-                  </div>
-                </form>
-              </div>
+                      size="medium"
+                      full
+                    />
+                  </>
+                </div>
+              </form>
             </Dialog.Panel>
           </Transition.Child>
         </div>
