@@ -1,14 +1,30 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import Table from "../../ui-components/table";
 import AddExpense from "../../ui-components/modals/add-expense";
 import Button from "../../ui-components/button";
+import { useQuery } from "@tanstack/react-query";
+import { fetchList } from "./pay-all.services";
+import { columns } from "./helper";
 const PayAll = () => {
   const [{ type, isPopupOpen }, setPopupState] = useState({
     isPopupOpen: false,
     type: null,
   });
 
+  const {
+    isLoading,
+    isError,
+    error,
+    data = [],
+  } = useQuery({
+    queryKey: ["pay-all", "list"],
+    queryFn: () => fetchList(),
+  });
+
+  const memorizedColumns = useMemo(() => {
+    return columns(data?.rows);
+  }, [data]);
   return (
     <>
       {isPopupOpen && type === "edit_days" && (
@@ -31,7 +47,7 @@ const PayAll = () => {
           }
         />
       </div>
-      <Table />
+      <Table columns={memorizedColumns} data={data?.rows} />
       {/* <div className="w-full flex flex-col justify-center items-center px-4 py-3 md:py-0 md:h-screen">
         {isLoading ? (
           <div role="status">

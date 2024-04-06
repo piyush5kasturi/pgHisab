@@ -16,7 +16,9 @@ const Layout = () => {
   return (
     <>
       <Header />
-      <div className="mt-[90px] mx-10">{location.pathname === "create" ? <PayAll /> : <Outlet />}</div>
+      <div className="mt-[90px] mx-10 mb-10">
+        {location.pathname === "create" ? <PayAll /> : <Outlet />}
+      </div>
     </>
   );
 };

@@ -14,16 +14,16 @@ export default function AddExpense({ toggle, isOpen = false }) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "Arshdeep Singh",
+      discription: "Arshdeep Singh",
       amount: "",
     },
   });
 
   const onSubmit = async (data) => {
-    const { name, amount } = data;
+    const { discription, amount } = data;
     await payAllMutation({
       payAmount: Number(amount),
-      discription: name,
+      discription,
     });
   };
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function AddExpense({ toggle, isOpen = false }) {
       toggle(false);
     }
   }, [data, toggle]);
-  console.log(error,";;;ss")
+  console.log(error, ";;;ss");
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -90,6 +90,21 @@ export default function AddExpense({ toggle, isOpen = false }) {
                         placeholder="Enter Amount"
                         errors={errors?.amount}
                         required
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="discription"
+                    rules={{ required: false }}
+                    render={({ field: { value, onChange } }) => (
+                      <Input
+                        type="text"
+                        label="Discription"
+                        value={value}
+                        onChange={onChange}
+                        placeholder="Enter Discription"
+                        errors={errors?.discription}
                       />
                     )}
                   />
