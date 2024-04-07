@@ -67,7 +67,7 @@ const Header = () => {
             onClick={() => {
               Cookies.remove("pg-token", { domain: window.location.hostname });
               dispatch(logout({ payload: null }));
-              navigate("/login");
+              navigate("/");
             }}
           />
         </ul>

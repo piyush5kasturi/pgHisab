@@ -7,13 +7,12 @@ import PayOne from "./components/create/pay-one";
 const PayAll = lazy(() => import("./components/create/pay-all"));
 const App = () => {
   const user = useSelector((state) => state.auth);
-  console.log("ddddasad", user?.isLoggedIn);
   return (
     <Suspense fallback={<p> Loading...</p>}>
       <BrowserRouter>
         <Routes>
           {!user?.isLoggedIn ? (
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
           ) : (
             <Route path="/" element={<Layout />}>
               <Route path="create" element={<PayAll />} />

@@ -11,7 +11,7 @@ const Layout = () => {
   const location = useLocation();
   console.log("ddddd",user?.isLoggedIn)
   if (!user?.isLoggedIn) {
-    return navigate("/login");
+    return navigate("/");
   }
 
   return (
