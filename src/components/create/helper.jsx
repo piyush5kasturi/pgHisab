@@ -1,11 +1,11 @@
 export const tabSlug = [
   {
     name: "All Pay",
-    route: "create",
+    route: "/create",
   },
   {
     name: "Pay One",
-    route: "pay-one",
+    route: "/pay-one",
   },
 ];
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Table from "../../ui-components/table";
 import AddExpense from "../../ui-components/modals/add-expense";
@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchList } from "./pay-all.services";
 import { columns } from "./helper";
 const PayAll = () => {
+  const [{ limit, page }, setPage] = useState({ limit: 10, page: 1 });
   const [{ type, isPopupOpen }, setPopupState] = useState({
     isPopupOpen: false,
     type: null,
@@ -17,14 +18,21 @@ const PayAll = () => {
     isError,
     error,
     data = [],
+    refetch,
   } = useQuery({
     queryKey: ["pay-all", "list"],
-    queryFn: () => fetchList(),
+    queryFn: () => fetchList(limit, page),
+    enabled: false,
   });
+
+  useEffect(() => {
+    if (page > 0) refetch();
+  }, [refetch, page]);
 
   const memorizedColumns = useMemo(() => {
     return columns(data?.rows);
   }, [data]);
+
   return (
     <>
       {isPopupOpen && type === "edit_days" && (
@@ -35,6 +43,8 @@ const PayAll = () => {
               isPopupOpen: false,
               type: null,
             });
+            setPage({ limit: 10, page: 1 });
+            refetch();
           }}
         />
       )}
@@ -47,7 +57,16 @@ const PayAll = () => {
           }
         />
       </div>
-      <Table columns={memorizedColumns} data={data?.rows} />
+      <Table
+        onChangePage={(page) => {
+          setPage({ limit: 10, page });
+        }}
+        columns={memorizedColumns}
+        data={data?.rows || []}
+        isLoading={isLoading}
+        total={data?.count || 0}
+        page={page}
+      />
       {/* <div className="w-full flex flex-col justify-center items-center px-4 py-3 md:py-0 md:h-screen">
         {isLoading ? (
           <div role="status">

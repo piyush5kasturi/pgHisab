@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import { tabSlug } from "../create/helper";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import Button from "../../ui-components/button";
+import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { logout } from "../../reducers/auth";
+import BurgerIcon from "../../assets/ui-icons/burger.svg?react";
+import Close from "../../assets/ui-icons/close.svg?react";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
+
   return (
     <div className="shadow-md w-full fixed top-0 left-0">
       <div className="md:flex items-center justify-between bg-white py-4 md:px-10 px-7">
@@ -19,7 +27,15 @@ const Header = () => {
           onClick={() => setOpen(!open)}
           className="absolute right-8 top-6 cursor-pointer md:hidden w-7 h-7"
         >
-          {open ? "close" : "open"}
+          {open ? (
+            <Close
+              className={classNames(
+                "cursor-pointer transition-all fill-current"
+              )}
+            />
+          ) : (
+            <BurgerIcon className="w-5 h-5 fill-current" />
+          )}
         </div>
         {/* linke items */}
         <ul
@@ -28,16 +44,15 @@ const Header = () => {
           }`}
         >
           {tabSlug.map((link, index) => (
-            <li key={index} className="md:ml-8 md:my-0 my-7 font-semibold">
+            <li key={index} className="md:ml-8 md:my-0 my-7 font-semibold"  onClick={() => setOpen(!open)}>
               <Link
                 to={link.route}
                 className={classNames(
                   "text-gray-800 hover:text-[#00D936] duration-500",
                   {
-                    "text-[#00D936]":
-                      location.pathname.endsWith(
-                        link.route == "/" ? "create" : link.route
-                      ),
+                    "!text-[#00D936]": location.pathname.endsWith(
+                      link.route == "/" ? "create" : link.route
+                    ),
                   }
                 )}
               >
@@ -45,7 +60,16 @@ const Header = () => {
               </Link>
             </li>
           ))}
-         <Button text="Logout" className="md:ml-8" />
+          <Button
+            text="Logout"
+            className="md:ml-8"
+            type="button"
+            onClick={() => {
+              Cookies.remove("pg-token", { domain: window.location.hostname });
+              dispatch(logout({ payload: null }));
+              navigate("/login");
+            }}
+          />
         </ul>
         {/* button */}
       </div>

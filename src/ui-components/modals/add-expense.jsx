@@ -6,7 +6,9 @@ import Input from "../input";
 import Close from "../../assets/ui-icons/close.svg?react";
 import classNames from "classnames";
 import Button from "../button";
+import { useQueryClient } from "@tanstack/react-query";
 export default function AddExpense({ toggle, isOpen = false }) {
+  const queryClient = useQueryClient();
   const { payAllMutation, isLoading, error, data } = usePayAll();
   const {
     control,
@@ -14,7 +16,7 @@ export default function AddExpense({ toggle, isOpen = false }) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      discription: "Arshdeep Singh",
+      discription: "",
       amount: "",
     },
   });
@@ -26,12 +28,14 @@ export default function AddExpense({ toggle, isOpen = false }) {
       discription,
     });
   };
+
   useEffect(() => {
     if (data) {
+      queryClient.removeQueries({ queryKey: ["pay-all", "list"] });
       toggle(false);
     }
-  }, [data, toggle]);
-  console.log(error, ";;;ss");
+  }, [data, queryClient, toggle]);
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog

@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import Create from "../create";
 import Header from "../header";
@@ -7,10 +7,11 @@ import { lazy } from "react";
 const PayAll = lazy(() => import("../create/pay-all"));
 const Layout = () => {
   const user = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const location = useLocation();
-
+  console.log("ddddd",user?.isLoggedIn)
   if (!user?.isLoggedIn) {
-    return <Navigate to="/" replace />;
+    return navigate("/login");
   }
 
   return (
