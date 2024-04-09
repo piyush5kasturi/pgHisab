@@ -29,7 +29,7 @@ const Table = ({
     <>
       <div
         className={classNames(
-          "w-full relative overflow-x-auto overflow-y-hidden no-scrollbar z-[-1]"
+          "w-full relative overflow-x-auto overflow-y-hidden"
           // {
           //   [className]: className,
           // }
@@ -37,7 +37,7 @@ const Table = ({
       >
         <table
           className={classNames(
-            "w-full border-[1px] border-[#E7E7E7] dark:border-light-color border-separate border-spacing-0 rounded-t-lg"
+            "w-full border-[1px] border-[#E7E7E7]  border-separate border-spacing-0 rounded-t-lg"
             // { [tableClassName]: tableClassName }
           )}
         >
@@ -48,7 +48,7 @@ const Table = ({
                 <td
                   colSpan={totalColumns}
                   className={classNames(
-                    "text-center text-sm h-[68px] dark:text-white"
+                    "text-center text-sm h-[68px]"
                   )}
                 >
                   No Data
@@ -59,7 +59,7 @@ const Table = ({
               <tr>
                 <td
                   colSpan={totalColumns}
-                  className={classNames("text-center h-[68px] dark:text-white")}
+                  className={classNames("text-center h-[68px]")}
                 >
                   Loading...
                 </td>
@@ -71,7 +71,7 @@ const Table = ({
                   <td
                     key={cell.id}
                     className={classNames(
-                      "py-3 px-6 border-[#E7E7E7] dark:border-light-color dark:text-white text-sm h-[68px] ",
+                      "py-3 px-6 border-[#E7E7E7] text-sm h-[68px] ",
                       {
                         "border-b-[1px]":
                           table.getRowModel().rows?.length - 1 !== i,
@@ -92,7 +92,7 @@ const Table = ({
         </table>
       </div>
       {!isLoading && total > limit && (
-        <div className="py-5 mb-10 border-[#E7E7E7] border-[1px] dark:border-light-color border-t-0 rounded-b-lg">
+        <div className="py-5 mb-10 border-[#E7E7E7] border-[1px] border-t-0 rounded-b-lg">
           <Pagination
             page={page}
             totalElements={total}

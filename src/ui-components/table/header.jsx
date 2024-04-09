@@ -11,7 +11,7 @@ const Header = ({ table }) => {
               key={header.id}
               style={{ position: "relative", width: header.getSize() }}
               className={classNames(
-                "bg-light border-b-[1px] border-[#E7E7E7] dark:border-light-color font-normal dark:bg-dark-light py-3 text-left text-[#262626] dark:text-light text-xs px-6"
+                "bg-light border-b-[1px] border-[#E7E7E7] font-normal  py-3 text-left text-[#262626]  text-xs px-6"
                 // {
                 //   "rounded-tr-lg": headerGroup.headers?.length - 1 === i,
                 //   "rounded-tl-lg": i === 0,

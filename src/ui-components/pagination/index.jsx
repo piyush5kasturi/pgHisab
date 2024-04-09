@@ -8,7 +8,7 @@ const Pagination = ({
   elementsPerPage,
   page,
   onPageChange,
-  className='',
+  className = "",
 }) => {
   const paginationRange = usePagination({
     currentPage: page,
@@ -47,22 +47,20 @@ const Pagination = ({
       >
         <span
           className={classNames(
-            "flex gap-3 sm:gap-4 items-center  text-sm select-none relative",
-            { "text-[#4F4F4F] dark:text-[#D1D1D1]": page !== 1 },
-            { "text-[#CCCCCC] dark:text-[#3D3D3D]": page === 1 }
+            "flex gap-3 sm:gap-4 items-center  text-sm select-none relative ml-2",
+            { "text-[#4F4F4F] ": page !== 1 },
+            { "text-[#CCCCCC] ": page === 1 }
           )}
         >
-          <PaginationLeftIcon
-            className={classNames(`fill-current dark:fill-current`)}
-          />
-          Previous
+          <PaginationLeftIcon className={classNames(`fill-current `)} />
+
         </span>
       </div>
-      <div className="flex col-span-8 sm:col-span-1 justify-center gap-4 items-center dark:text-white">
+      <div className="flex col-span-8 sm:col-span-1 justify-center gap-4 items-center">
         <li className="text-sm select-none hidden md:block text-[#8F8F8F] whitespace-nowrap">
           Page {page} of {lastPage}
         </li>
-        <ul className="flex justify-center items-center dark:text-white">
+        <ul className="flex justify-center items-center ">
           {paginationRange?.map((pageNumber, index) => {
             // If the pageItem is a DOT, render the DOTS unicode character
             if (pageNumber === "...") {
@@ -78,7 +76,7 @@ const Pagination = ({
               <li
                 key={pageNumber}
                 className={classNames(
-                  `px-2 md:px-4 select-none py-2 text-sm md:py-2 rounded-[4px] relative flex items-center ${
+                  `px-4 select-none py-2 text-sm md:py-2 rounded-[4px] relative flex items-center ${
                     pageNumber === page
                       ? "bg-[#00D936] text-white"
                       : "cursor-pointer"
@@ -108,14 +106,13 @@ const Pagination = ({
       >
         <span
           className={classNames(
-            "flex gap-3 sm:gap-4 text-sm items-center select-none relative dark:text-[#D1D1D1]",
-            { "text-[#4F4F4F] dark:text-[#D1D1D1]": page !== lastPage },
-            { "text-[#CCCCCC] dark:text-[#3D3D3D]": page === lastPage }
+            "flex gap-3 sm:gap-4 text-sm items-center select-none relative mr-2",
+            { "text-[#4F4F4F] ": page !== lastPage },
+            { "text-[#CCCCCC] ": page === lastPage }
           )}
         >
-          Next
           <PaginationRightIcon
-            className={classNames(`fill-current dark:fill-current`)}
+            className={classNames(`fill-current`)}
           />
         </span>
       </div>

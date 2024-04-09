@@ -45,6 +45,6 @@ export default async function API(method = "get", url = "", data = {}) {
     //   Cookies.remove('datacube_session', { domain: window.location.hostname });
     //   localStorage.removeItem('user');
     // }
-    // throw error.response;
+    throw error.response;
   }
 }
