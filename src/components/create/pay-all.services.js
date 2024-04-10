@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import API from "../../lib/api-client";
 
 export const fetchList = async (perPage = 10, page = 1) => {
-  const url = `https://pghisab.bsite.net/api/pay/${perPage}/${page}`;
+  const url = `/api/pay/${perPage}/${page}`;
   const response = await API("get", url);
   const result = response?.data?.result;
   return { rows: result?.payDetailResponses, count: result?.totalCount };

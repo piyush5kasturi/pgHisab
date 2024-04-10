@@ -4,8 +4,8 @@ import Table from "../../ui-components/table";
 import AddExpense from "../../ui-components/modals/add-expense";
 import Button from "../../ui-components/button";
 import { useQuery } from "@tanstack/react-query";
-import { fetchList } from "./pay-all.services";
 import { columnsOne } from "./helper";
+import { fetchListSingle } from "./pay-one.services";
 const PayOne = () => {
   const [{ limit, page }, setPage] = useState({ limit: 10, page: 1 });
   const [{ type, isPopupOpen }, setPopupState] = useState({
@@ -20,8 +20,8 @@ const PayOne = () => {
     data = [],
     refetch,
   } = useQuery({
-    queryKey: ["pay-all", "list"],
-    queryFn: () => fetchList(limit, page),
+    queryKey: ["pay-single", "list"],
+    queryFn: () => fetchListSingle(limit, page),
     enabled: false,
   });
 
@@ -45,6 +45,7 @@ const PayOne = () => {
             setPage({ limit: 10, page: 1 });
             refetch();
           }}
+          singlePerson
         />
       )}
       <div className="pb-4 flex justify-end">

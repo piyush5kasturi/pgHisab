@@ -1,16 +1,33 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { usePayAll } from "../../components/create/pay-all.services";
 import Input from "../input";
 import Close from "../../assets/ui-icons/close.svg?react";
 import classNames from "classnames";
 import Button from "../button";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Dropdown from "../dropdown";
-export default function AddExpense({ toggle, isOpen = false }) {
+import {
+  fetchUser,
+  usePaySingle,
+} from "../../components/create/pay-one.services";
+import { useSelector } from "react-redux";
+export default function AddExpense({
+  toggle,
+  isOpen = false,
+  singlePerson = false,
+}) {
   const queryClient = useQueryClient();
+  const auth = useSelector((state) => state?.auth?.user);
   const { payAllMutation, isLoading, error, data } = usePayAll();
+  const {
+    paySingleMutation,
+    isLoading: paySingleLoading,
+    error: paySingleError,
+    data: paySingleData,
+  } = usePaySingle();
+
   const {
     control,
     handleSubmit,
@@ -23,12 +40,35 @@ export default function AddExpense({ toggle, isOpen = false }) {
     },
   });
 
+  const {
+    isLoading: userLoading,
+    isError: userIsError,
+    error: userError,
+    data: userData = [],
+  } = useQuery({
+    queryKey: ["user", "list"],
+    queryFn: () => fetchUser(),
+    enabled: singlePerson,
+  });
+
+  const updatedUserData = useMemo(() => {
+    return userData.filter((val) => val?.value !== auth?.autoID);
+  }, [auth?.autoID, userData]);
+
   const onSubmit = async (data) => {
-    const { discription, amount } = data;
-    await payAllMutation({
-      payAmount: Number(amount),
-      discription,
-    });
+    const { discription, amount, user } = data;
+    if (singlePerson) {
+      await paySingleMutation({
+        payAmount: Number(amount),
+        discription,
+        fromUserId: user?.value,
+      });
+    } else {
+      await payAllMutation({
+        payAmount: Number(amount),
+        discription,
+      });
+    }
   };
 
   useEffect(() => {
@@ -36,7 +76,11 @@ export default function AddExpense({ toggle, isOpen = false }) {
       queryClient.removeQueries({ queryKey: ["pay-all", "list"] });
       toggle(false);
     }
-  }, [data, queryClient, toggle]);
+    if (paySingleData) {
+      queryClient.removeQueries({ queryKey: ["pay-single", "list"] });
+      toggle(false);
+    }
+  }, [data, paySingleData, queryClient, toggle]);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -83,29 +127,27 @@ export default function AddExpense({ toggle, isOpen = false }) {
               </div>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-6">
-                  <Controller
-                    control={control}
-                    rules={{
-                      required: true,
-                    }}
-                    render={({ field: { onChange, value } }) => (
-                      <div>
-                        <Dropdown
-                          items={[
-                            { label: 'Holiday', value: 'holiday' },
-                            { label: 'B-Day', value: 'birthday' },
-                            { label: 'Start Date', value: 'start_date' },
-                          ]}
-                          onChange={onChange}
-                          error={errors.user}
-                          value={value}
-                          label="User"
-                          placeholder=" Select User"
-                        />
-                      </div>
-                    )}
-                    name="user"
-                  />
+                  {singlePerson && (
+                    <Controller
+                      control={control}
+                      rules={{
+                        required: true,
+                      }}
+                      render={({ field: { onChange, value } }) => (
+                        <div>
+                          <Dropdown
+                            items={updatedUserData}
+                            onChange={onChange}
+                            error={errors.user}
+                            value={value}
+                            label="User"
+                            placeholder=" Select User"
+                          />
+                        </div>
+                      )}
+                      name="user"
+                    />
+                  )}
                   <Controller
                     control={control}
                     name="amount"
@@ -149,8 +191,8 @@ export default function AddExpense({ toggle, isOpen = false }) {
                     />
                     <Button
                       text="Save"
-                      isLoading={isLoading}
-                      disabled={isLoading}
+                      isLoading={isLoading || paySingleLoading}
+                      disabled={isLoading || paySingleLoading}
                       type="submit"
                       size="medium"
                       full
