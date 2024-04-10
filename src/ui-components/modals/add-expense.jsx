@@ -7,6 +7,7 @@ import Close from "../../assets/ui-icons/close.svg?react";
 import classNames from "classnames";
 import Button from "../button";
 import { useQueryClient } from "@tanstack/react-query";
+import Dropdown from "../dropdown";
 export default function AddExpense({ toggle, isOpen = false }) {
   const queryClient = useQueryClient();
   const { payAllMutation, isLoading, error, data } = usePayAll();
@@ -18,6 +19,7 @@ export default function AddExpense({ toggle, isOpen = false }) {
     defaultValues: {
       discription: "",
       amount: "",
+      user: "",
     },
   });
 
@@ -81,6 +83,29 @@ export default function AddExpense({ toggle, isOpen = false }) {
               </div>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-6">
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: true,
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                      <div>
+                        <Dropdown
+                          items={[
+                            { label: 'Holiday', value: 'holiday' },
+                            { label: 'B-Day', value: 'birthday' },
+                            { label: 'Start Date', value: 'start_date' },
+                          ]}
+                          onChange={onChange}
+                          error={errors.user}
+                          value={value}
+                          label="User"
+                          placeholder=" Select User"
+                        />
+                      </div>
+                    )}
+                    name="user"
+                  />
                   <Controller
                     control={control}
                     name="amount"

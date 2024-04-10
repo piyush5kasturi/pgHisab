@@ -3,10 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import Table from "../../ui-components/table";
 import AddExpense from "../../ui-components/modals/add-expense";
 import Button from "../../ui-components/button";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchList } from "./pay-all.services";
 import { columns } from "./helper";
+import Alert from "../../ui-components/alert";
 const PayAll = () => {
+  const queryClient = useQueryClient();
   const [{ limit, page }, setPage] = useState({ limit: 10, page: 1 });
   const [{ type, isPopupOpen }, setPopupState] = useState({
     isPopupOpen: false,
@@ -26,13 +28,16 @@ const PayAll = () => {
   });
 
   useEffect(() => {
-    if (page > 0) refetch();
-  }, [refetch, page]);
+    if (page > 0) {
+      queryClient.removeQueries({ queryKey: ["pay-all", "list"] });
+      refetch();
+    }
+  }, [refetch, page, queryClient]);
 
   const memorizedColumns = useMemo(() => {
     return columns(data?.rows);
   }, [data]);
-console.log(isLoading,";;;;;")
+
   return (
     <>
       {isPopupOpen && type === "edit_days" && (
@@ -57,6 +62,7 @@ console.log(isLoading,";;;;;")
           }
         />
       </div>
+      {isError && <Alert text={error?.displayMessage} type="error" />}
       <Table
         onChangePage={(page) => {
           setPage({ limit: 10, page });
