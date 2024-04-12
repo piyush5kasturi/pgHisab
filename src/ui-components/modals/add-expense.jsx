@@ -13,6 +13,8 @@ import {
   usePaySingle,
 } from "../../components/create/pay-one.services";
 import { useSelector } from "react-redux";
+import Label from "../label";
+import RadioThemeOne from "../radio";
 export default function AddExpense({
   toggle,
   isOpen = false,
@@ -31,12 +33,14 @@ export default function AddExpense({
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm({
     defaultValues: {
       discription: "",
       amount: "",
       user: "",
+      split: "false",
     },
   });
 
@@ -56,13 +60,17 @@ export default function AddExpense({
   }, [auth?.autoID, userData]);
 
   const onSubmit = async (data) => {
-    const { discription, amount, user } = data;
+    const { discription, amount, user, split } = data;
     if (singlePerson) {
-      await paySingleMutation({
-        payAmount: Number(amount),
-        discription,
-        fromUserId: user?.value,
-      });
+      await paySingleMutation(
+        {
+          payAmount: Number(amount),
+          discription,
+          fromUserId: user?.value,
+          split:Boolean(split),
+        },
+
+      );
     } else {
       await payAllMutation({
         payAmount: Number(amount),
@@ -142,6 +150,7 @@ export default function AddExpense({
                             value={value}
                             label="User"
                             placeholder=" Select User"
+                            required
                           />
                         </div>
                       )}
@@ -179,6 +188,38 @@ export default function AddExpense({
                       />
                     )}
                   />
+                  {singlePerson && (
+                    <Controller
+                      control={control}
+                      rules={{
+                        required: true,
+                      }}
+                      render={({ field: { onChange, value } }) => (
+                        <div>
+                          <Label>Split</Label>
+                          <div className="flex flex-col mt-3 gap-3">
+                            <RadioThemeOne
+                              onChange={() => {
+                                onChange("false");
+                              }}
+                              label="False"
+                              value={value === "false"}
+                              name="false"
+                            />
+                            <RadioThemeOne
+                              onChange={() => {
+                                onChange("true");
+                              }}
+                              label="True"
+                              value={value === "true"}
+                              name="true"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      name="split"
+                    />
+                  )}
                 </div>
                 <div className="grid grid-cols-2 w-full p-6 border-t-[1px] border-[#E7E7E7]  gap-4">
                   <>
