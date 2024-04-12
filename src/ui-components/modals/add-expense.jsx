@@ -61,16 +61,14 @@ export default function AddExpense({
 
   const onSubmit = async (data) => {
     const { discription, amount, user, split } = data;
+    const splitValue = split === "false" ? false : true;
     if (singlePerson) {
-      await paySingleMutation(
-        {
-          payAmount: Number(amount),
-          discription,
-          fromUserId: user?.value,
-          split:Boolean(split),
-        },
-
-      );
+      await paySingleMutation({
+        payAmount: Number(amount),
+        discription,
+        fromUserId: user?.value,
+        split:splitValue,
+      });
     } else {
       await payAllMutation({
         payAmount: Number(amount),
@@ -204,7 +202,7 @@ export default function AddExpense({
                               }}
                               label="False"
                               value={value === "false"}
-                              name="false"
+                              name="div_false"
                             />
                             <RadioThemeOne
                               onChange={() => {
@@ -212,7 +210,7 @@ export default function AddExpense({
                               }}
                               label="True"
                               value={value === "true"}
-                              name="true"
+                              name="div_true"
                             />
                           </div>
                         </div>

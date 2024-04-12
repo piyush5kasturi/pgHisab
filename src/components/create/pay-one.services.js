@@ -22,7 +22,7 @@ const paySingle = async (values) => {
   const url = "/YouPayme";
   const response = await API("post", url, values);
   if (!response) {
-    throw false;
+  throw false;
   }
   return response.data.result;
 };
