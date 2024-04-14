@@ -17,7 +17,7 @@ const axios = Axios.create({
 // };
 
 axios.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${Cookies.get("pg-token")}`;
+  config.headers.Authorization = `Bearer ${localStorage.getItem("pg-token")}`;
   return config;
 });
 

@@ -4,13 +4,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import Button from "../../ui-components/button";
 import Cookies from "js-cookie";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../reducers/auth";
 import BurgerIcon from "../../assets/ui-icons/burger.svg?react";
 import Close from "../../assets/ui-icons/close.svg?react";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const auth = useSelector((state) => state?.auth?.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,6 +23,7 @@ const Header = () => {
         <div className="font-bold text-2xl cursor-pointer flex items-center gap-1">
           <span>PG Hisab</span>
         </div>
+        <p>Welocme {auth?.name}</p>
         {/* Menu icon */}
         <div
           onClick={() => setOpen(!open)}
@@ -44,7 +46,11 @@ const Header = () => {
           }`}
         >
           {tabSlug.map((link, index) => (
-            <li key={index} className="md:ml-8 md:my-0 my-7 font-semibold"  onClick={() => setOpen(!open)}>
+            <li
+              key={index}
+              className="md:ml-8 md:my-0 my-7 font-semibold"
+              onClick={() => setOpen(!open)}
+            >
               <Link
                 to={link.route}
                 className={classNames(
@@ -65,7 +71,7 @@ const Header = () => {
             className="md:ml-8"
             type="button"
             onClick={() => {
-              Cookies.remove("pg-token", { domain: window.location.hostname });
+              localStorage.removeItem("pg-token");
               dispatch(logout({ payload: null }));
               navigate("/");
             }}

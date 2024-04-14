@@ -1,7 +1,6 @@
 
 import { useMutation } from "@tanstack/react-query";
 import API from "../../lib/api-client";
-import Cookies from "js-cookie";
 
 const signIn = async (values) => {
     const url = '/login';
@@ -9,7 +8,7 @@ const signIn = async (values) => {
     if (!response) {
         throw false;
     }
-    Cookies.set('pg-token', response?.data?.result?.token);
+    localStorage.setItem('pg-token', response?.data?.result?.token);
     return response.data.result;
 
 };
