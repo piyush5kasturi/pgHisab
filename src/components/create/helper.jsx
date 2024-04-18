@@ -7,36 +7,23 @@ export const tabSlug = [
     name: "Pay One",
     route: "/pay-one",
   },
+  {
+    name: "Pay List",
+    route: "/pay-list",
+  },
 ];
 
 export const columns = (data = []) => {
   if (data.length === 0) return []; // Return empty array if data is empty
 
-  const keys = Object.keys(data[0]); // Get keys from the first object in data
-
-  return keys.map((key) => {
+  return data.map((key) => {
     return {
-      accessorFn: (row) => <span className="capitalize">{row[key]}</span>,
-      id: key,
+      accessorFn: (row) => <span className="capitalize">{row[key?.mapValue]}</span>,
+      id: key?.mapValue,
       cell: (info) => info.getValue(),
-      header: () => <span>{key}</span>, // Use key as header
+      header: () => <span>{key?.colName}</span>, // Use key as header
       footer: (props) => props.column.id,
     };
   });
 };
 
-export const columnsOne = (data = []) => {
-  if (data.length === 0) return []; // Return empty array if data is empty
-
-  const keys = Object.keys(data[0]); // Get keys from the first object in data
-
-  return keys.map((key) => {
-    return {
-      accessorFn: (row) => <span className="capitalize">{row[key]}</span>,
-      id: key,
-      cell: (info) => info.getValue(),
-      header: () => <span>{key}</span>, // Use key as header
-      footer: (props) => props.column.id,
-    };
-  });
-};

@@ -4,8 +4,9 @@ import Table from "../../ui-components/table";
 import AddExpense from "../../ui-components/modals/add-expense";
 import Button from "../../ui-components/button";
 import { useQuery } from "@tanstack/react-query";
-import { columnsOne } from "./helper";
+import { columns } from "./helper";
 import { fetchListSingle } from "./pay-one.services";
+import Alert from "../../ui-components/alert";
 const PayOne = () => {
   const [{ limit, page }, setPage] = useState({ limit: 10, page: 1 });
   const [{ type, isPopupOpen }, setPopupState] = useState({
@@ -30,8 +31,9 @@ const PayOne = () => {
   }, [refetch, page]);
 
   const memorizedColumns = useMemo(() => {
-    return columnsOne(data?.rows);
+    return columns(data?.columns);
   }, [data]);
+
   return (
     <>
       {isPopupOpen && type === "edit_days" && (
@@ -57,6 +59,7 @@ const PayOne = () => {
           }
         />
       </div>
+      {isError && <Alert text={error?.displayMessage} type="error" />}
       <Table
         onChangePage={(page) => {
           setPage({ limit: 10, page });

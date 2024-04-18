@@ -1,5 +1,4 @@
 import Axios from "axios";
-import Cookies from "js-cookie";
 // import { setAlert } from 'src/reducers/alert';
 // import { setEnoughPermission, setSessionExpired } from 'src/reducers/auth';
 

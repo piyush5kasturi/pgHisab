@@ -15,6 +15,8 @@ import {
 import { useSelector } from "react-redux";
 import Label from "../label";
 import RadioThemeOne from "../radio";
+import Alert from "../alert";
+import { placeholderElBtn, placeholderElInput } from "../../utils/placeholders";
 export default function AddExpense({
   toggle,
   isOpen = false,
@@ -22,18 +24,18 @@ export default function AddExpense({
 }) {
   const queryClient = useQueryClient();
   const auth = useSelector((state) => state?.auth?.user);
-  const { payAllMutation, isLoading, error, data } = usePayAll();
+  const { payAllMutation, isLoading, error, data, isError } = usePayAll();
   const {
     paySingleMutation,
     isLoading: paySingleLoading,
     error: paySingleError,
     data: paySingleData,
+    isError: paySingleIsError,
   } = usePaySingle();
 
   const {
     control,
     handleSubmit,
-    getValues,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -67,7 +69,7 @@ export default function AddExpense({
         payAmount: Number(amount),
         discription,
         fromUserId: user?.value,
-        split:splitValue,
+        split: splitValue,
       });
     } else {
       await payAllMutation({
@@ -131,9 +133,21 @@ export default function AddExpense({
                   onClick={() => toggle(false)}
                 />
               </div>
+              {(isError || paySingleIsError || userIsError) && (
+                <Alert
+                  text={
+                    error?.displayMessage ||
+                    paySingleError?.displayMessage ||
+                    userError?.displayMessage
+                  }
+                  type="error"
+                />
+              )}
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-6">
-                  {singlePerson && (
+                  {singlePerson && userLoading ? (
+                    placeholderElInput()
+                  ) : (
                     <Controller
                       control={control}
                       rules={{
@@ -155,38 +169,48 @@ export default function AddExpense({
                       name="user"
                     />
                   )}
-                  <Controller
-                    control={control}
-                    name="amount"
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <Input
-                        type="number"
-                        label="Amount"
-                        value={value}
-                        onChange={onChange}
-                        placeholder="Enter Amount"
-                        errors={errors?.amount}
-                        required
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="discription"
-                    rules={{ required: false }}
-                    render={({ field: { value, onChange } }) => (
-                      <Input
-                        type="text"
-                        label="Discription"
-                        value={value}
-                        onChange={onChange}
-                        placeholder="Enter Discription"
-                        errors={errors?.discription}
-                      />
-                    )}
-                  />
-                  {singlePerson && (
+                  {userLoading ? (
+                    placeholderElInput()
+                  ) : (
+                    <Controller
+                      control={control}
+                      name="amount"
+                      rules={{ required: true }}
+                      render={({ field: { value, onChange } }) => (
+                        <Input
+                          type="number"
+                          label="Amount"
+                          value={value}
+                          onChange={onChange}
+                          placeholder="Enter Amount"
+                          errors={errors?.amount}
+                          required
+                        />
+                      )}
+                    />
+                  )}
+                  {userLoading ? (
+                    placeholderElInput()
+                  ) : (
+                    <Controller
+                      control={control}
+                      name="discription"
+                      rules={{ required: false }}
+                      render={({ field: { value, onChange } }) => (
+                        <Input
+                          type="text"
+                          label="Discription"
+                          value={value}
+                          onChange={onChange}
+                          placeholder="Enter Discription"
+                          errors={errors?.discription}
+                        />
+                      )}
+                    />
+                  )}
+                  {singlePerson && userLoading ? (
+                    placeholderElInput()
+                  ) : (
                     <Controller
                       control={control}
                       rules={{
@@ -220,23 +244,27 @@ export default function AddExpense({
                   )}
                 </div>
                 <div className="grid grid-cols-2 w-full p-6 border-t-[1px] border-[#E7E7E7]  gap-4">
-                  <>
-                    <Button
-                      variant="secondary"
-                      text="Cancel"
-                      onClick={() => toggle(false)}
-                      size="medium"
-                      full
-                    />
-                    <Button
-                      text="Save"
-                      isLoading={isLoading || paySingleLoading}
-                      disabled={isLoading || paySingleLoading}
-                      type="submit"
-                      size="medium"
-                      full
-                    />
-                  </>
+                  {userLoading ? (
+                    placeholderElBtn()
+                  ) : (
+                    <>
+                      <Button
+                        variant="secondary"
+                        text="Cancel"
+                        onClick={() => toggle(false)}
+                        size="medium"
+                        full
+                      />
+                      <Button
+                        text="Save"
+                        isLoading={isLoading || paySingleLoading}
+                        disabled={isLoading || paySingleLoading}
+                        type="submit"
+                        size="medium"
+                        full
+                      />
+                    </>
+                  )}
                 </div>
               </form>
             </Dialog.Panel>

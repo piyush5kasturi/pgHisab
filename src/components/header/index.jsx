@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { tabSlug } from "../create/helper";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import Button from "../../ui-components/button";
-import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../reducers/auth";
 import BurgerIcon from "../../assets/ui-icons/burger.svg?react";

@@ -35,7 +35,7 @@ const PayAll = () => {
   }, [refetch, page, queryClient]);
 
   const memorizedColumns = useMemo(() => {
-    return columns(data?.rows);
+    return columns(data?.columns);
   }, [data]);
 
   return (
