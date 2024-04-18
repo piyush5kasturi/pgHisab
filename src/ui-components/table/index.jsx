@@ -1,4 +1,3 @@
-import React from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -47,9 +46,7 @@ const Table = ({
               <tr>
                 <td
                   colSpan={totalColumns}
-                  className={classNames(
-                    "text-center text-sm h-[68px]"
-                  )}
+                  className={classNames("text-center text-sm h-[68px]")}
                 >
                   No Data
                 </td>
@@ -65,29 +62,35 @@ const Table = ({
                 </td>
               </tr>
             )}
-            {table.getRowModel().rows.map((row, i) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className={classNames(
-                      "py-3 px-6 border-[#E7E7E7] text-sm h-[68px] ",
-                      {
-                        "border-b-[1px]":
-                          table.getRowModel().rows?.length - 1 !== i,
-                        // "pr-6": useCheckBox,
-                        // "px-6": !useCheckBox,
-                        // [tdClassName]: tdClassName,
-                      }
-                      // { "bg-light dark:bg-dark-light": checkedRow }
-                    )}
-                    style={{ maxWidth: cell.column.getSize() }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {table.getRowModel().rows.map((row, i) => {
+              return (
+                <tr key={row.id} className="">
+                  {row.getVisibleCells().map((cell) => {
+                    const { customTd = false } = cell.column.columnDef;
+                    return customTd ? (
+                      flexRender(cell.column.columnDef.cell, cell.getContext())
+                    ) : (
+                      <td
+                        className={classNames(
+                          "py-3 px-6 border-[#E7E7E7] dark:border-light-color dark:text-white text-sm h-[68px] ",
+                          {
+                            "border-b-[1px]":
+                              table.getRowModel().rows?.length - 1 !== i,
+                          }
+                        )}
+                        key={cell.id}
+                        style={{ maxWidth: cell.column.getSize() }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
