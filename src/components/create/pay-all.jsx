@@ -129,7 +129,7 @@ const PayAll = () => {
 
   return (
     <>
-      {isPopupOpen && type === "add" && (
+      {((isPopupOpen && type === 'add') || (isPopupOpen && type === 'edit')) && (
         <AddExpense
           isOpen={isPopupOpen}
           toggle={() => {
@@ -137,6 +137,7 @@ const PayAll = () => {
             setPage({ limit: 10, page: 1 });
             refetch();
           }}
+          editData={popupData}
         />
       )}
 

@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 
 import Table from "../../ui-components/table";
 import Button from "../../ui-components/button";
-import { useQuery } from "@tanstack/react-query";
-import { columns} from "./helper";
-import { fetchList} from "./pay-list.services";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { columns } from "./helper";
+import { fetchList } from "./pay-list.services";
 import Alert from "../../ui-components/alert";
 const PayList = () => {
+  const queryClient = useQueryClient();
   const [{ limit, page }, setPage] = useState({ limit: 10, page: 1 });
   const {
     isLoading,
@@ -15,16 +16,17 @@ const PayList = () => {
     data = [],
     refetch,
   } = useQuery({
-    queryKey: ["pay-single", "list"],
+    queryKey: ["pay-final", "list"],
     queryFn: () => fetchList(limit, page),
     enabled: false,
   });
 
-
-
   useEffect(() => {
-    if (page > 0) refetch();
-  }, [refetch, page]);
+    if (page > 0) {
+      queryClient.removeQueries({ queryKey: ["pay-final", "list"] });
+      refetch();
+    }
+  }, [refetch, page, queryClient]);
 
   const Columns = useMemo(() => {
     return columns(data?.columns);
@@ -42,7 +44,10 @@ const PayList = () => {
               text="Pay Now"
               disabled={row?.original?.status === 2}
               onClick={() =>
-                window.open(`paytmmp://pay?pa=${row?.original?.upiID}&am=${row?.original?.payAmount}`,"_blank")
+                window.open(
+                  `paytmmp://pay?pa=${row?.original?.upiID}&am=${row?.original?.payAmount}`,
+                  "_blank"
+                )
               }
             />
           );
@@ -55,7 +60,7 @@ const PayList = () => {
   );
   return (
     <>
-     {isError && <Alert text={error?.displayMessage} type="error" />}
+      {isError && <Alert text={error?.displayMessage} type="error" />}
       <Table
         onChangePage={(page) => {
           setPage({ limit: 10, page });
@@ -66,7 +71,6 @@ const PayList = () => {
         total={data?.count || 0}
         page={page}
       />
-
     </>
   );
 };

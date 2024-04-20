@@ -4,8 +4,8 @@ import { Suspense, lazy } from "react";
 import Layout from "./components/layout";
 import { useSelector } from "react-redux";
 import PayOne from "./components/create/pay-one";
-import ErrorPage from "./components/Error";
 import PayList from "./components/create/pay-list";
+import Profile from "./components/profile";
 const PayAll = lazy(() => import("./components/create/pay-all"));
 const App = () => {
   const user = useSelector((state) => state.auth);
@@ -23,7 +23,8 @@ const App = () => {
               <Route path="create" element={<PayAll />} />
               <Route path="pay-one" element={<PayOne />} />
               <Route path="pay-list" element={<PayList />} />
-              <Route path="*" element={<Navigate to={'/create'} />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="*" element={<Navigate to={"/create"} />} />
             </Route>
           )}
         </Routes>

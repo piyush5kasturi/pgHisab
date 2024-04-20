@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useMemo } from "react";
+import { Fragment, useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { usePayAll } from "../../components/create/pay-all.services";
 import Input from "../input";
@@ -21,6 +21,7 @@ export default function AddExpense({
   toggle,
   isOpen = false,
   singlePerson = false,
+  editData = null,
 }) {
   const queryClient = useQueryClient();
   const auth = useSelector((state) => state?.auth?.user);
@@ -37,6 +38,7 @@ export default function AddExpense({
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       discription: "",
@@ -47,10 +49,11 @@ export default function AddExpense({
   });
 
   const {
-    isLoading: userLoading,
+    isLoading: userLoading = false,
     isError: userIsError,
     error: userError,
     data: userData = [],
+    isFetching,
   } = useQuery({
     queryKey: ["user", "list"],
     queryFn: () => fetchUser(),
@@ -78,6 +81,23 @@ export default function AddExpense({
       });
     }
   };
+
+  const setDefaultHandler = useCallback(() => {
+    reset({
+      user: updatedUserData?.filter(
+        (val) => val?.label === editData?.toName
+      )[0],
+      amount: editData?.payAmount,
+      discription: editData?.discription,
+    });
+  }, [editData, reset, updatedUserData]);
+
+  useEffect(() => {
+    if (editData) {
+      console.log(editData, ";;;");
+      setDefaultHandler();
+    }
+  }, [editData, setDefaultHandler]);
 
   useEffect(() => {
     if (data) {
@@ -124,7 +144,7 @@ export default function AddExpense({
             <Dialog.Panel className="w-[564px] rounded-lg max-w-2xl transform bg-[#FFFFFF] text-left shadow-[0px_16px_32px_-12px_#00000033] transition-all">
               <div className="flex justify-between mx-6 mt-6 mb-4 items-center">
                 <p className="text-lg font-montserratBold text-[#3D3D3D]">
-                  Add Expense
+                  {editData ? "Edit" : "Add"} Expense
                 </p>
                 <Close
                   className={classNames(
@@ -145,31 +165,35 @@ export default function AddExpense({
               )}
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-6">
-                  {singlePerson && userLoading ? (
-                    placeholderElInput()
+                  {singlePerson ? (
+                    userLoading && isFetching ? (
+                      placeholderElInput()
+                    ) : (
+                      <Controller
+                        control={control}
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field: { onChange, value } }) => (
+                          <div>
+                            <Dropdown
+                              items={updatedUserData}
+                              onChange={onChange}
+                              error={errors.user}
+                              value={value}
+                              label="User"
+                              placeholder=" Select User"
+                              required
+                            />
+                          </div>
+                        )}
+                        name="user"
+                      />
+                    )
                   ) : (
-                    <Controller
-                      control={control}
-                      rules={{
-                        required: true,
-                      }}
-                      render={({ field: { onChange, value } }) => (
-                        <div>
-                          <Dropdown
-                            items={updatedUserData}
-                            onChange={onChange}
-                            error={errors.user}
-                            value={value}
-                            label="User"
-                            placeholder=" Select User"
-                            required
-                          />
-                        </div>
-                      )}
-                      name="user"
-                    />
+                    <></>
                   )}
-                  {userLoading ? (
+                  {userLoading && isFetching ? (
                     placeholderElInput()
                   ) : (
                     <Controller
@@ -189,7 +213,7 @@ export default function AddExpense({
                       )}
                     />
                   )}
-                  {userLoading ? (
+                  {userLoading && isFetching ? (
                     placeholderElInput()
                   ) : (
                     <Controller
@@ -208,43 +232,47 @@ export default function AddExpense({
                       )}
                     />
                   )}
-                  {singlePerson && userLoading ? (
-                    placeholderElInput()
-                  ) : (
-                    <Controller
-                      control={control}
-                      rules={{
-                        required: true,
-                      }}
-                      render={({ field: { onChange, value } }) => (
-                        <div>
-                          <Label>Split</Label>
-                          <div className="flex flex-col mt-3 gap-3">
-                            <RadioThemeOne
-                              onChange={() => {
-                                onChange("false");
-                              }}
-                              label="False"
-                              value={value === "false"}
-                              name="div_false"
-                            />
-                            <RadioThemeOne
-                              onChange={() => {
-                                onChange("true");
-                              }}
-                              label="True"
-                              value={value === "true"}
-                              name="div_true"
-                            />
+                  {singlePerson ? (
+                    userLoading && isFetching ? (
+                      placeholderElInput()
+                    ) : (
+                      <Controller
+                        control={control}
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field: { onChange, value } }) => (
+                          <div>
+                            <Label>Split</Label>
+                            <div className="flex flex-col mt-3 gap-3">
+                              <RadioThemeOne
+                                onChange={() => {
+                                  onChange("false");
+                                }}
+                                label="False"
+                                value={value === "false"}
+                                name="div_false"
+                              />
+                              <RadioThemeOne
+                                onChange={() => {
+                                  onChange("true");
+                                }}
+                                label="True"
+                                value={value === "true"}
+                                name="div_true"
+                              />
+                            </div>
                           </div>
-                        </div>
-                      )}
-                      name="split"
-                    />
+                        )}
+                        name="split"
+                      />
+                    )
+                  ) : (
+                    <></>
                   )}
                 </div>
                 <div className="grid grid-cols-2 w-full p-6 border-t-[1px] border-[#E7E7E7]  gap-4">
-                  {userLoading ? (
+                  {userLoading && isFetching ? (
                     placeholderElBtn()
                   ) : (
                     <>

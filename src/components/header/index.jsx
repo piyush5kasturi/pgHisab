@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { tabSlug } from "../create/helper";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import classNames from "classnames";
@@ -22,7 +22,7 @@ const Header = () => {
         <div className="font-bold text-2xl cursor-pointer flex items-center gap-1">
           <span>PG Hisab</span>
         </div>
-        <p>Welocme {auth?.name}</p>
+        <Link to="/profile">Welocme {auth?.name}</Link>
         {/* Menu icon */}
         <div
           onClick={() => setOpen(!open)}
