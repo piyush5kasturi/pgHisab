@@ -8,7 +8,7 @@ import EditIcon from "../../assets/ui-icons/edit.svg?react";
 import DeleteIcon from "../../assets/ui-icons/delete.svg?react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { columns } from "./helper";
-import { fetchListSingle } from "./pay-one.services";
+import { fetchListSingle, useDelete } from "./pay-one.services";
 import Alert from "../../ui-components/alert";
 import classNames from "classnames";
 import DropDownButton from "../../ui-components/dropdown-button";
@@ -23,6 +23,14 @@ const PayOne = () => {
   const [{ limit, page }, setPage] = useState({ limit: 10, page: 1 });
   const [{ type, isPopupOpen, data: popupData }, setPopupState] =
     useState(defaultPopupState);
+
+  const {
+    deleteMutation,
+    isLoading: deleteIsLoading,
+    error: deleteError,
+    data: deleteData,
+    isError: deleteIsError,
+  } = useDelete();
   const {
     isLoading,
     isError,
@@ -38,21 +46,30 @@ const PayOne = () => {
     setPopupState({
       isPopupOpen: true,
       type: "delete",
-      data: selected.length > 0 ? selected : [selected],
+      data: selected?.autoID,
     });
   };
 
   const trigerDelete = () => {
-    const ids = popupData.map((v) => v.id);
-    // deleteMutation(ids);
+    deleteMutation(popupData);
   };
+
+  useEffect(() => {
+    if (deleteData) {
+      queryClient.removeQueries({ queryKey: ["pay-single", "list"] });
+      setPopupState(defaultPopupState);
+      refetch();
+    } else if (deleteError) {
+      setPopupState(defaultPopupState);
+    }
+  }, [deleteData, queryClient, deleteError, refetch]);
 
   useEffect(() => {
     if (page > 0) {
       queryClient.removeQueries({ queryKey: ["pay-single", "list"] });
       refetch();
     }
-  }, [refetch, page]);
+  }, [refetch, page, queryClient]);
 
   const Columns = useMemo(() => {
     return columns(data?.columns);
@@ -96,6 +113,9 @@ const PayOne = () => {
                       title: "Edit",
                       Icon: EditIcon,
                       onClick: () => {
+                        // queryClient.removeQueries({
+                        //   queryKey: ["user", "data"],
+                        // });
                         setPopupState({
                           isPopupOpen: true,
                           type: "edit",
@@ -133,7 +153,6 @@ const PayOne = () => {
           isOpen={isPopupOpen}
           toggle={() => {
             setPopupState(defaultPopupState);
-            setPage({ limit: 10, page: 1 });
             refetch();
           }}
           singlePerson
@@ -149,6 +168,7 @@ const PayOne = () => {
           toggle={(v) =>
             v ? trigerDelete() : setPopupState(defaultPopupState)
           }
+          isLoading={deleteIsLoading}
         />
       )}
       <div className="pb-4 flex justify-end">
@@ -158,7 +178,12 @@ const PayOne = () => {
           onClick={() => setPopupState({ isPopupOpen: true, type: "add" })}
         />
       </div>
-      {isError && <Alert text={error?.displayMessage} type="error" />}
+      {(isError || deleteIsError) && (
+        <Alert
+          text={error?.displayMessage || deleteError?.displayMessage}
+          type="error"
+        />
+      )}
       <Table
         onChangePage={(page) => {
           setPage({ limit: 10, page });

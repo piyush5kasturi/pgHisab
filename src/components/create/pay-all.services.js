@@ -5,7 +5,11 @@ export const fetchList = async (perPage = 10, page = 1) => {
   const url = `/api/pay/${perPage}/${page}`;
   const response = await API("get", url);
   const result = response?.data?.result;
-  return { rows: result?.payDetailResponses, count: result?.totalCount,columns:result?.tableColumns };
+  return {
+    rows: result?.payDetailResponses,
+    count: result?.totalCount,
+    columns: result?.tableColumns,
+  };
 };
 
 const payAll = async (values) => {
@@ -30,6 +34,32 @@ export function usePayAll() {
     isLoading,
     error: (error && error?.data) || "",
     data,
-    isError
+    isError,
+  };
+}
+
+const deletePayAll = async (id) => {
+  const url = `/api/pay/${id}`;
+  const response = await API("delete", url);
+  if (!response) {
+    throw false;
+  }
+  return true;
+};
+
+export function useDelete() {
+  const {
+    mutate: deleteMutation,
+    isLoading,
+    error,
+    data,
+    isError,
+  } = useMutation((id) => deletePayAll(id));
+  return {
+    deleteMutation,
+    isLoading,
+    error: (error && error?.data) || "",
+    data,
+    isError,
   };
 }

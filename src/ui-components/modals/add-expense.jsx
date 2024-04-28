@@ -68,17 +68,35 @@ export default function AddExpense({
     const { discription, amount, user, split } = data;
     const splitValue = split === "false" ? false : true;
     if (singlePerson) {
-      await paySingleMutation({
-        payAmount: Number(amount),
-        discription,
-        fromUserId: user?.value,
-        split: splitValue,
-      });
+      if (editData) {
+        await paySingleMutation({
+          autoID: editData?.autoID,
+          payAmount: Number(amount),
+          discription,
+          fromUserId: user?.value,
+          split: splitValue,
+        });
+      } else {
+        await paySingleMutation({
+          payAmount: Number(amount),
+          discription,
+          fromUserId: user?.value,
+          split: splitValue,
+        });
+      }
     } else {
-      await payAllMutation({
-        payAmount: Number(amount),
-        discription,
-      });
+      if (editData) {
+        await payAllMutation({
+          autoID: editData?.autoID,
+          payAmount: Number(amount),
+          discription,
+        });
+      } else {
+        await payAllMutation({
+          payAmount: Number(amount),
+          discription,
+        });
+      }
     }
   };
 
@@ -87,17 +105,20 @@ export default function AddExpense({
       user: updatedUserData?.filter(
         (val) => val?.label === editData?.toName
       )[0],
-      amount: editData?.payAmount,
+      amount:
+        singlePerson && editData?.split
+          ? editData?.payAmount * 2
+          : editData?.payAmount,
       discription: editData?.discription,
+      split: editData?.split?.toString(),
     });
-  }, [editData, reset, updatedUserData]);
+  }, [editData, reset, updatedUserData, singlePerson]);
 
   useEffect(() => {
     if (editData) {
-      console.log(editData, ";;;");
       setDefaultHandler();
     }
-  }, [editData, setDefaultHandler]);
+  }, [editData]);
 
   useEffect(() => {
     if (data) {

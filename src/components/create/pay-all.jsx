@@ -7,7 +7,7 @@ import Ellipsis from "../../assets/ui-icons/ellipsis.svg?react";
 import EditIcon from "../../assets/ui-icons/edit.svg?react";
 import DeleteIcon from "../../assets/ui-icons/delete.svg?react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchList } from "./pay-all.services";
+import { fetchList, useDelete } from "./pay-all.services";
 import { columns } from "./helper";
 import Alert from "../../ui-components/alert";
 import DropDownButton from "../../ui-components/dropdown-button";
@@ -24,6 +24,13 @@ const PayAll = () => {
   const [{ limit, page }, setPage] = useState({ limit: 10, page: 1 });
   const [{ type, isPopupOpen, data: popupData }, setPopupState] =
     useState(defaultPopupState);
+  const {
+    deleteMutation,
+    isLoading: deleteIsLoading,
+    error: deleteError,
+    data: deleteData,
+    isError: deleteIsError,
+  } = useDelete();
   const {
     isLoading,
     isError,
@@ -43,17 +50,26 @@ const PayAll = () => {
     }
   }, [refetch, page, queryClient]);
 
+  useEffect(() => {
+    if (deleteData) {
+      queryClient.removeQueries({ queryKey: ["pay-all", "list"] });
+      setPopupState(defaultPopupState);
+      refetch();
+    } else if (deleteError) {
+      setPopupState(defaultPopupState);
+    }
+  }, [deleteData, queryClient, deleteError, refetch]);
+
   const onhandleDelete = (selected) => {
     setPopupState({
       isPopupOpen: true,
       type: "delete",
-      data: selected.length > 0 ? selected : [selected],
+      data: selected?.autoID,
     });
   };
 
   const trigerDelete = () => {
-    const ids = popupData.map((v) => v.id);
-    // deleteMutation(ids);
+    deleteMutation(popupData);
   };
 
   const Columns = useMemo(() => {
@@ -129,12 +145,12 @@ const PayAll = () => {
 
   return (
     <>
-      {((isPopupOpen && type === 'add') || (isPopupOpen && type === 'edit')) && (
+      {((isPopupOpen && type === "add") ||
+        (isPopupOpen && type === "edit")) && (
         <AddExpense
           isOpen={isPopupOpen}
           toggle={() => {
             setPopupState(defaultPopupState);
-            setPage({ limit: 10, page: 1 });
             refetch();
           }}
           editData={popupData}
@@ -150,6 +166,7 @@ const PayAll = () => {
           toggle={(v) =>
             v ? trigerDelete() : setPopupState(defaultPopupState)
           }
+          isLoading={deleteIsLoading}
         />
       )}
       <div className="pb-4 flex justify-end">
@@ -159,7 +176,12 @@ const PayAll = () => {
           onClick={() => setPopupState({ isPopupOpen: true, type: "add" })}
         />
       </div>
-      {isError && <Alert text={error?.displayMessage} type="error" />}
+      {(isError || deleteIsError) && (
+        <Alert
+          text={error?.displayMessage || deleteError?.displayMessage}
+          type="error"
+        />
+      )}
       <Table
         onChangePage={(page) => {
           setPage({ limit: 10, page });
