@@ -8,6 +8,10 @@ export const tabSlug = [
     route: "/pay-one",
   },
   {
+    name: "Your Pay One",
+    route: "/your-pay-one",
+  },
+  {
     name: "Pay List",
     route: "/pay-list",
   },
@@ -18,7 +22,9 @@ export const columns = (data = []) => {
 
   return data.map((key) => {
     return {
-      accessorFn: (row) => <span className="capitalize">{row[key?.mapValue]}</span>,
+      accessorFn: (row) => (
+        <span className="capitalize">{row[key?.mapValue]}</span>
+      ),
       id: key?.mapValue,
       cell: (info) => info.getValue(),
       header: () => <span>{key?.colName}</span>, // Use key as header
@@ -26,4 +32,3 @@ export const columns = (data = []) => {
     };
   });
 };
-
